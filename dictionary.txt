@@ -1,0 +1,37 @@
+# AFL Dictionary for CS-412 Fuzzing Lab
+# Format: "token"
+# These tokens guide the fuzzer toward interesting code paths
+
+# Common magic bytes
+"BUF"
+"INT"
+"NUL"
+"UAF"
+"CRASH"
+
+# Boundary values
+"0"
+"1"
+"\x00"
+"\xff"
+"\x00\x00\x00\x00"
+"\xff\xff\xff\xff"
+
+# Common delimiters
+" "
+"\n"
+"\r\n"
+","
+";"
+":"
+
+# Length-related
+"\x00\x00"
+"\x00\x01"
+"\x10\x00"
+
+# Test patterns
+"TEST"
+"VALID"
+"AAAA"
+"BBBB"
