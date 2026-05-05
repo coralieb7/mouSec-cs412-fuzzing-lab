@@ -1,126 +1,59 @@
-/*
- * CS-412 Fuzzing Lab - Example Harness
- * 
- * This is a simple harness that reads input from a file and processes it.
- * Replace this with your actual target library/function for the assignment.
- */
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
+#include <png.h>
 
-#define MAX_INPUT_SIZE 4096
-
-/*
- * Example vulnerable function - REPLACE THIS with your actual target
- * This simulates a simple parser with various bugs for demonstration
- */
-int parse_input(const uint8_t *data, size_t len) {
-    if (len < 4) {
-        return -1;  // Too short
-    }
-
-    // Example vulnerability 1: Buffer overflow
-    char buffer[16];
-    if (data[0] == 'B' && data[1] == 'U' && data[2] == 'F') {
-        // BUG: No bounds checking
-        memcpy(buffer, data + 3, len - 3);
-    }
-
-    // Example vulnerability 2: Integer overflow
-    if (data[0] == 'I' && data[1] == 'N' && data[2] == 'T') {
-        uint32_t size = *(uint32_t*)(data + 3);
-        char *alloc = malloc(size + 1);  // BUG: size + 1 can overflow
-        if (alloc) {
-            memcpy(alloc, data + 7, size);
-            free(alloc);
-        }
-    }
-
-    // Example vulnerability 3: Null pointer dereference
-    if (data[0] == 'N' && data[1] == 'U' && data[2] == 'L') {
-        char *ptr = NULL;
-        if (len > 10 && data[10] == 'X') {
-            *ptr = 'A';  // BUG: Null deref
-        }
-    }
-
-    // Example vulnerability 4: Use after free
-    if (data[0] == 'U' && data[1] == 'A' && data[2] == 'F') {
-        char *ptr = malloc(32);
-        free(ptr);
-        if (len > 3 && data[3] == 'X') {
-            ptr[0] = 'A';  // BUG: Use after free
-        }
-    }
-
-    // Example crash condition: Division by zero
-    if (len >= 8 && 
-        data[0] == 'C' && data[1] == 'R' && 
-        data[2] == 'A' && data[3] == 'S' &&
-        data[4] == 'H') {
-        int divisor = data[5] - '0';
-        int result = 100 / divisor;  // BUG: Divide by zero if data[5] == '0'
-        printf("Result: %d\n", result);
-    }
-
-    return 0;
-}
-
-/*
- * Main harness function
- * Reads input from file (passed as argument) and feeds it to the target
- */
 int main(int argc, char **argv) {
-    FILE *fp;
-    uint8_t *buffer;
-    size_t len;
-
-    // Check for input file argument
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
-        fprintf(stderr, "This harness reads from a file (use @@ in AFL)\n");
-        return 1;
+    // 1. Check for input file from AFL++
+    if (argc < 2) {
+        return 0; 
     }
 
-    // Open input file
-    fp = fopen(argv[1], "rb");
+    FILE *fp = fopen(argv[1], "rb");
     if (!fp) {
-        perror("fopen");
-        return 1;
+        return 0;
     }
 
-    // Get file size
-    fseek(fp, 0, SEEK_END);
-    len = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    // Limit input size
-    if (len > MAX_INPUT_SIZE) {
-        len = MAX_INPUT_SIZE;
-    }
-
-    // Read input
-    buffer = (uint8_t *)malloc(len);
-    if (!buffer) {
+    // 2. Initialize libpng core structures
+    png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png_ptr) {
         fclose(fp);
-        return 1;
+        return 0;
     }
 
-    size_t bytes_read = fread(buffer, 1, len, fp);
+    png_infop info_ptr = png_create_info_struct(png_ptr);
+    if (!info_ptr) {
+        png_destroy_read_struct(&png_ptr, NULL, NULL);
+        fclose(fp);
+        return 0;
+    }
+
+    // 3. AFL++ Error Handling Bridge
+    // libpng doesn't use standard return codes for errors; it uses setjmp/longjmp.
+    // If a mutated PNG is invalid, libpng will "jump" back to this if-statement.
+    if (setjmp(png_jmpbuf(png_ptr))) {
+        // We catch the error, clean up memory, and exit with code 0.
+        // If we didn't do this, AFL++ would record every broken PNG as a "crash"!
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+        fclose(fp);
+        return 0;
+    }
+
+    // 4.  Prevent OOM, False Positives
+    // AFL++ will inevitably try to set the PNG width/height to 65535x65535.
+    // Without this limit, ASAN will crash trying to allocate gigabytes of RAM.
+    png_set_user_limits(png_ptr, 1024, 1024);
+
+    // 5. Feed the file to libpng
+    png_init_io(png_ptr, fp);
+
+    // 6. Read and Transform
+    // We use png_read_png because it automatically handles memory allocation/deallocation,
+    // meaning it won't accidentally introduce memory leaks in your harness.
+    png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_EXPAND | PNG_TRANSFORM_STRIP_ALPHA, NULL);
+
+    // 7. Clean up cleanly for the next AFL++ execution
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     fclose(fp);
 
-    if (bytes_read != len) {
-        free(buffer);
-        return 1;
-    }
-
-    // Process input with target function
-    int result = parse_input(buffer, len);
-
-    // Cleanup
-    free(buffer);
-
-    return result;
+    return 0;
 }
