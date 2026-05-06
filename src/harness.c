@@ -49,7 +49,11 @@ int main(int argc, char **argv) {
     // 6. Read and Transform
     // We use png_read_png because it automatically handles memory allocation/deallocation,
     // meaning it won't accidentally introduce memory leaks in your harness.
-    png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_EXPAND | PNG_TRANSFORM_STRIP_ALPHA, NULL);
+    png_read_png(png_ptr, info_ptr,
+        PNG_TRANSFORM_EXPAND |
+        PNG_TRANSFORM_STRIP_16 |
+        PNG_TRANSFORM_GRAY_TO_RGB,
+        NULL);
 
     // 7. Clean up cleanly for the next AFL++ execution
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);

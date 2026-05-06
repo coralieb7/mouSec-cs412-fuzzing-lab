@@ -1,37 +1,38 @@
-# AFL Dictionary for CS-412 Fuzzing Lab
-# Format: "token"
-# These tokens guide the fuzzer toward interesting code paths
+#
+# AFL dictionary for PNG images
+# -----------------------------
+#
+# Just the basic, standard-originating sections; does not include vendor
+# extensions.
+#
+# Created by Michal Zalewski
+#
 
-# Common magic bytes
-"BUF"
-"INT"
-"NUL"
-"UAF"
-"CRASH"
+header_png="\x89PNG\x0d\x0a\x1a\x0a"
 
-# Boundary values
-"0"
-"1"
-"\x00"
-"\xff"
-"\x00\x00\x00\x00"
-"\xff\xff\xff\xff"
-
-# Common delimiters
-" "
-"\n"
-"\r\n"
-","
-";"
-":"
-
-# Length-related
-"\x00\x00"
-"\x00\x01"
-"\x10\x00"
-
-# Test patterns
-"TEST"
-"VALID"
-"AAAA"
-"BBBB"
+section_IDAT="IDAT"
+section_IEND="IEND"
+section_IHDR="IHDR"
+section_PLTE="PLTE"
+section_bKGD="bKGD"
+section_cHRM="cHRM"
+section_fRAc="fRAc"
+section_gAMA="gAMA"
+section_gIFg="gIFg"
+section_gIFt="gIFt"
+section_gIFx="gIFx"
+section_hIST="hIST"
+section_iCCP="iCCP"
+section_iTXt="iTXt"
+section_oFFs="oFFs"
+section_pCAL="pCAL"
+section_pHYs="pHYs"
+section_sBIT="sBIT"
+section_sCAL="sCAL"
+section_sPLT="sPLT"
+section_sRGB="sRGB"
+section_sTER="sTER"
+section_tEXt="tEXt"
+section_tIME="tIME"
+section_tRNS="tRNS"
+section_zTXt="zTXt"
