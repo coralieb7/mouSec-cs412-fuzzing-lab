@@ -51,6 +51,7 @@ build-qemu: $(SRC_DIR)/harness.c
 
 fuzz-instrumented: build-instrumented
 	mkdir -p $(FINDINGS_DIR)
+	LD_LIBRARY_PATH=$(LIBPNG_INSTRUMENTED)/lib \
 	afl-fuzz -m none -t 1000+ \
 		-i $(INPUT_DIR) \
 		-o $(FINDINGS_DIR) \
@@ -59,6 +60,7 @@ fuzz-instrumented: build-instrumented
 
 fuzz-qemu: build-qemu
 	mkdir -p $(FINDINGS_QEMU_DIR)
+	LD_LIBRARY_PATH=$(LIBPNG_VANILLA)/lib \
 	afl-fuzz -Q -m none -t 1000+ \
 		-i $(INPUT_DIR) \
 		-o $(FINDINGS_QEMU_DIR) \

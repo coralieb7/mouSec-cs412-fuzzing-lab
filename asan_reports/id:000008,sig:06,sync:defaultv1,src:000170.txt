@@ -1,0 +1,75 @@
+NOTE: CRC in the file is 0x30303030, change to 0x44a48ac6
+NOTE: CRC in the file is 0x30303030, change to 0xf0ad825f
+NOTE: CRC in the file is 0x30303030, change to 0xb925de80
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+=================================================================
+==1815473==ERROR: AddressSanitizer: heap-use-after-free on address 0xffff7de03dc8 at pc 0xaaaaca23409c bp 0xffffe1393210 sp 0xffffe1393208
+READ of size 8 at 0xffff7de03dc8 thread T0
+    #0 0xaaaaca234098 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaaca233818 in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaaca22d6d8 in main /fuzzing/src/harness.c:91:21
+    #3 0xffff816773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #4 0xffff816774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #5 0xaaaaca17eeec in _start (/fuzzing/png_fuzz+0x2eeec) (BuildId: 6ab59b011a343e94e34ab7036bd37c43bcc8f3c8)
+
+0xffff7de03dc8 is located 8 bytes inside of 288-byte region [0xffff7de03dc0,0xffff7de03ee0)
+freed by thread T0 here:
+    #0 0xaaaaca1f5e0c in free (/fuzzing/png_fuzz+0xa5e0c) (BuildId: 6ab59b011a343e94e34ab7036bd37c43bcc8f3c8)
+    #1 0xaaaaca264278 in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaaca264278 in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaaca22e9ec in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaaca22e43c in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaaca23f8e8 in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaaca23f630 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaaca22d53c in main /fuzzing/src/harness.c:75:5
+    #8 0xffff816773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #9 0xffff816774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #10 0xaaaaca17eeec in _start (/fuzzing/png_fuzz+0x2eeec) (BuildId: 6ab59b011a343e94e34ab7036bd37c43bcc8f3c8)
+
+previously allocated by thread T0 here:
+    #0 0xaaaaca1f60a0 in __interceptor_malloc (/fuzzing/png_fuzz+0xa60a0) (BuildId: 6ab59b011a343e94e34ab7036bd37c43bcc8f3c8)
+    #1 0xaaaaca264448 in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaaca264448 in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaaca264448 in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaaca233ec0 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaaca27184c in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaaca23cc3c in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaaca22d208 in main /fuzzing/src/harness.c:35:5
+    #8 0xffff816773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #9 0xffff816774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #10 0xaaaaca17eeec in _start (/fuzzing/png_fuzz+0x2eeec) (BuildId: 6ab59b011a343e94e34ab7036bd37c43bcc8f3c8)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200fefbc0760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200fefbc0770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200fefbc0780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200fefbc0790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200fefbc07a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200fefbc07b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200fefbc07c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200fefbc07d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200fefbc07e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200fefbc07f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200fefbc0800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==1815473==ABORTING
