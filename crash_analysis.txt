@@ -1,0 +1,1171 @@
+=== findings/default/crashes/id:000000,sig:06,src:000005,time:74982,execs:73171,op:havoc,rep:3 ===
+NOTE: CRC in the file is 0x09be420b, change to 0xb60b3a13
+=================================================================
+==403==ERROR: AddressSanitizer: heap-use-after-free on address 0xffff9fc03dc8 at pc 0xaaaad1995800 bp 0xffffcc33aa30 sp 0xffffcc33aa28
+READ of size 8 at 0xffff9fc03dc8 thread T0
+    #0 0xaaaad19957fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaad1994f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaad198e31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaad198d8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffffa34673fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffffa34674d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaad18df7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffff9fc03dc8 is located 8 bytes inside of 288-byte region [0xffff9fc03dc0,0xffff9fc03ee0)
+freed by thread T0 here:
+    #0 0xaaaad19566cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaad19c59dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaad19c59dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaad1990150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaad198fba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaad19a104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaad19a0d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaad198e12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaad198d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffa34673fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffa34674d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaad18df7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaad1956960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaad19c5bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaad19c5bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaad19c5bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaad1995624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaad19dad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaad199e3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaad198dbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaad198d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffa34673fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffa34674d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaad18df7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff3f80760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff3f80770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff3f80780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff3f80790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff3f807a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff3f807b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff3f807c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff3f807d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff3f807e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff3f807f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff3f80800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==403==ABORTING
+
+=== findings/default/crashes/id:000001,sig:06,src:000126,time:119221,execs:109873,op:havoc,rep:2 ===
+NOTE: CRC in the file is 0x3797b758, change to 0xad27a4ec
+NOTE: CRC in the file is 0x46c96b3e, change to 0xb5701a76
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0x3cb94bb6
+NOTE: CRC in the file is 0x912a96cf, change to 0xca42a6ed
+=================================================================
+==406==ERROR: AddressSanitizer: heap-use-after-free on address 0xffff8be03dc8 at pc 0xaaaab3445800 bp 0xffffd853ab30 sp 0xffffd853ab28
+READ of size 8 at 0xffff8be03dc8 thread T0
+    #0 0xaaaab34457fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaab3444f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaab343e31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaab343d8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffff8f9573fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffff8f9574d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaab338f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffff8be03dc8 is located 8 bytes inside of 288-byte region [0xffff8be03dc0,0xffff8be03ee0)
+freed by thread T0 here:
+    #0 0xaaaab34066cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaab34759dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaab34759dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaab3440150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaab343fba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaab345104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaab3450d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaab343e12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaab343d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff8f9573fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff8f9574d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaab338f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaab3406960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaab3475bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaab3475bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaab3475bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaab3445624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaab348ad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaab344e3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaab343dbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaab343d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff8f9573fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff8f9574d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaab338f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff17c0760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff17c0770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff17c0780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff17c0790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff17c07a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff17c07b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff17c07c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff17c07d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff17c07e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff17c07f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff17c0800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==406==ABORTING
+
+=== findings/default/crashes/id:000002,sig:06,src:000188,time:221983,execs:183922,op:havoc,rep:2 ===
+NOTE: CRC in the file is 0x2512bbef, change to 0x7567e432
+libpng warning: Incorrect bKGD chunk index value
+NOTE: CRC in the file is 0x46c96b3e, change to 0x1048ea37
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0xaa58eaf6
+NOTE: CRC in the file is 0x71c8653c, change to 0x71c9653c
+=================================================================
+==409==ERROR: AddressSanitizer: heap-use-after-free on address 0xffff84403dc8 at pc 0xaaaacde75800 bp 0xffffe7f80fb0 sp 0xffffe7f80fa8
+READ of size 8 at 0xffff84403dc8 thread T0
+    #0 0xaaaacde757fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaacde74f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaacde6e31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaacde6d8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffff87eb73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffff87eb74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaacddbf7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffff84403dc8 is located 8 bytes inside of 288-byte region [0xffff84403dc0,0xffff84403ee0)
+freed by thread T0 here:
+    #0 0xaaaacde366cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaacdea59dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaacdea59dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaacde70150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaacde6fba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaacde8104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaacde80d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaacde6e12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaacde6d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff87eb73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff87eb74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaacddbf7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaacde36960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaacdea5bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaacdea5bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaacdea5bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaacde75624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaacdebad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaacde7e3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaacde6dbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaacde6d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff87eb73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff87eb74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaacddbf7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff0880760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0880770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0880780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff0880790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff08807a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff08807b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff08807c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff08807d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff08807e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff08807f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0880800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==409==ABORTING
+
+=== findings/default/crashes/id:000003,sig:06,src:000435,time:333495,execs:287215,op:havoc,rep:1 ===
+NOTE: CRC in the file is 0x005467c7, change to 0xf6535751
+NOTE: CRC in the file is 0x46c96b3e, change to 0xa56f1894
+libpng warning: Data error in compressed datastream in zTXt chunk
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0xf5fb21e8
+NOTE: CRC in the file is 0x912a96cf, change to 0xca42a6ed
+=================================================================
+==412==ERROR: AddressSanitizer: heap-use-after-free on address 0xffffa7603dc8 at pc 0xaaaad9a95800 bp 0xffffecd45370 sp 0xffffecd45368
+READ of size 8 at 0xffffa7603dc8 thread T0
+    #0 0xaaaad9a957fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaad9a94f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaad9a8e31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaad9a8d8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffffab3573fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffffab3574d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaad99df7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffffa7603dc8 is located 8 bytes inside of 288-byte region [0xffffa7603dc0,0xffffa7603ee0)
+freed by thread T0 here:
+    #0 0xaaaad9a566cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaad9ac59dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaad9ac59dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaad9a90150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaad9a8fba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaad9aa104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaad9aa0d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaad9a8e12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaad9a8d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffab3573fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffab3574d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaad99df7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaad9a56960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaad9ac5bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaad9ac5bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaad9ac5bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaad9a95624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaad9adb55c in png_handle_zTXt /fuzzing/libpng-1.2.56/pngrutil.c:2221:10
+    #6 0xaaaad9a9e43c in png_read_info /fuzzing/libpng-1.2.56/pngread.c:549:10
+    #7 0xaaaad9a8dbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaad9a8d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffab3573fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffab3574d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaad99df7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff4ec0760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff4ec0770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff4ec0780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff4ec0790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff4ec07a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff4ec07b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff4ec07c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff4ec07d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff4ec07e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff4ec07f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff4ec0800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==412==ABORTING
+
+=== findings/default/crashes/id:000004,sig:06,src:000502,time:500167,execs:391465,op:havoc,rep:1 ===
+NOTE: CRC in the file is 0x815467ef, change to 0x1ca13d89
+NOTE: CRC in the file is 0x0068a99c, change to 0x9f79bdbd
+libpng warning: tRNS chunk has out-of-range samples for bit_depth
+libpng warning: Incorrect bKGD chunk length
+NOTE: CRC in the file is 0x88051d48, change to 0xf86fe9c7
+libpng warning: Incorrect pHYs chunk length
+NOTE: CRC in the file is 0x46c96b3e, change to 0x58667356
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0x583ee34b
+NOTE: CRC in the file is 0x71c8653c, change to 0x71c9653c
+=================================================================
+==415==ERROR: AddressSanitizer: heap-use-after-free on address 0xffff83003dc8 at pc 0xaaaac30e5800 bp 0xffffde886f50 sp 0xffffde886f48
+READ of size 8 at 0xffff83003dc8 thread T0
+    #0 0xaaaac30e57fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaac30e4f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaac30de31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaac30dd8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffff866b73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffff866b74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaac302f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffff83003dc8 is located 8 bytes inside of 288-byte region [0xffff83003dc0,0xffff83003ee0)
+freed by thread T0 here:
+    #0 0xaaaac30a66cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaac31159dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaac31159dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaac30e0150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaac30dfba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaac30f104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaac30f0d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaac30de12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaac30dd8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff866b73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff866b74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaac302f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaac30a6960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaac3115bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaac3115bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaac3115bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaac30e5624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaac312ad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaac30ee3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaac30ddbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaac30dd8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff866b73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff866b74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaac302f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff0600760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0600770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0600780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff0600790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff06007a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff06007b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff06007c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff06007d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff06007e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff06007f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0600800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==415==ABORTING
+
+=== findings/default/crashes/id:000005,sig:06,src:000502,time:507978,execs:397640,op:havoc,rep:2 ===
+NOTE: CRC in the file is 0x815467c7, change to 0x1ca13d89
+libpng warning: Ignoring PLTE chunk in grayscale PNG
+libpng warning: tRNS chunk has out-of-range samples for bit_depth
+libpng warning: Incorrect bKGD chunk length
+NOTE: CRC in the file is 0xfc64ba48, change to 0xaedc2de4
+NOTE: CRC in the file is 0x46c96b3e, change to 0x5c84e9b8
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0x32561348
+NOTE: CRC in the file is 0x71c8653c, change to 0x71c9653c
+=================================================================
+==418==ERROR: AddressSanitizer: heap-use-after-free on address 0xffff88403dc8 at pc 0xaaaadb425800 bp 0xffffc6b792d0 sp 0xffffc6b792c8
+READ of size 8 at 0xffff88403dc8 thread T0
+    #0 0xaaaadb4257fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaadb424f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaadb41e31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaadb41d8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffff8bd773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffff8bd774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaadb36f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffff88403dc8 is located 8 bytes inside of 288-byte region [0xffff88403dc0,0xffff88403ee0)
+freed by thread T0 here:
+    #0 0xaaaadb3e66cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaadb4559dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaadb4559dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaadb420150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaadb41fba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaadb43104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaadb430d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaadb41e12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaadb41d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff8bd773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff8bd774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaadb36f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaadb3e6960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaadb455bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaadb455bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaadb455bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaadb425624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaadb46ad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaadb42e3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaadb41dbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaadb41d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff8bd773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff8bd774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaadb36f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff1080760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff1080770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff1080780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff1080790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff10807a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff10807b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff10807c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff10807d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff10807e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff10807f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff1080800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==418==ABORTING
+
+=== findings/default/crashes/id:000006,sig:06,src:000726,time:770849,execs:586437,op:havoc,rep:4 ===
+NOTE: CRC in the file is 0x815467c7, change to 0x49b4e8b7
+NOTE: CRC in the file is 0x0072a99c, change to 0xae034f1d
+NOTE: CRC in the file is 0x8805ba54, change to 0x88051d48
+NOTE: CRC in the file is 0x46c96b3e, change to 0xbded4bd3
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0x541c4cf6
+NOTE: CRC in the file is 0xfc64ba54, change to 0x8d7b9b65
+NOTE: CRC in the file is 0x912a96cf, change to 0xf3134d58
+=================================================================
+==421==ERROR: AddressSanitizer: heap-use-after-free on address 0xffff8da03dc8 at pc 0xaaaab80c5800 bp 0xfffffe88e270 sp 0xfffffe88e268
+READ of size 8 at 0xffff8da03dc8 thread T0
+    #0 0xaaaab80c57fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaab80c4f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaab80be31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaab80bd8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffff915c73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffff915c74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaab800f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffff8da03dc8 is located 8 bytes inside of 288-byte region [0xffff8da03dc0,0xffff8da03ee0)
+freed by thread T0 here:
+    #0 0xaaaab80866cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaab80f59dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaab80f59dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaab80c0150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaab80bfba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaab80d104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaab80d0d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaab80be12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaab80bd8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff915c73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff915c74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaab800f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaab8086960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaab80f5bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaab80f5bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaab80f5bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaab80c5624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaab810ad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaab80ce3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaab80bdbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaab80bd8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff915c73fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff915c74d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaab800f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff1b40760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff1b40770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff1b40780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff1b40790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff1b407a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff1b407b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff1b407c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff1b407d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff1b407e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff1b407f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff1b40800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==421==ABORTING
+
+=== findings/default/crashes/id:000007,sig:06,src:000361,time:1108148,execs:823299,op:havoc,rep:2 ===
+NOTE: CRC in the file is 0x09be420b, change to 0x69b9a1ea
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x0def46b8, change to 0x1bbf9e2d
+=================================================================
+==424==ERROR: AddressSanitizer: heap-use-after-free on address 0xffff82203dc8 at pc 0xaaaad1725800 bp 0xffffdf7d19d0 sp 0xffffdf7d19c8
+READ of size 8 at 0xffff82203dc8 thread T0
+    #0 0xaaaad17257fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaad1724f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaad171e31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaad171d8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffff859773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffff859774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaad166f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffff82203dc8 is located 8 bytes inside of 288-byte region [0xffff82203dc0,0xffff82203ee0)
+freed by thread T0 here:
+    #0 0xaaaad16e66cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaad17559dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaad17559dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaad1720150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaad171fba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaad173104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaad1730d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaad171e12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaad171d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff859773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff859774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaad166f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaad16e6960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaad1755bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaad1755bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaad1755bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaad1725624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaad176ad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaad172e3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaad171dbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaad171d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffff859773fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffff859774d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaad166f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff0440760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0440770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0440780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff0440790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff04407a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff04407b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff04407c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff04407d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff04407e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff04407f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff0440800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==424==ABORTING
+
+=== findings/default/crashes/id:000008,sig:06,src:001171,time:1880232,execs:1339308,op:havoc,rep:2 ===
+NOTE: CRC in the file is 0x815467c7, change to 0x581a162a
+NOTE: CRC in the file is 0x0068a99c, change to 0x1ec7f010
+NOTE: CRC in the file is 0x3797b758, change to 0xad27a4ec
+NOTE: CRC in the file is 0x88051d48, change to 0xb36b3d80
+libpng warning: Incorrect bKGD chunk index value
+NOTE: CRC in the file is 0x46c96b3e, change to 0xf4e9b72e
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0xc69f5446
+libpng warning: Invalid gAMA after IDAT
+NOTE: CRC in the file is 0xfc64ba54, change to 0x3f338071
+=================================================================
+==427==ERROR: AddressSanitizer: heap-use-after-free on address 0xffffb4203dc8 at pc 0xaaaadf255800 bp 0xffffff2ff9d0 sp 0xffffff2ff9c8
+READ of size 8 at 0xffffb4203dc8 thread T0
+    #0 0xaaaadf2557fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaadf254f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaadf24e31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaadf24d8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffffb7e273fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffffb7e274d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaadf19f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffffb4203dc8 is located 8 bytes inside of 288-byte region [0xffffb4203dc0,0xffffb4203ee0)
+freed by thread T0 here:
+    #0 0xaaaadf2166cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaadf2859dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaadf2859dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaadf250150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaadf24fba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaadf26104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaadf260d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaadf24e12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaadf24d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffb7e273fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffb7e274d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaadf19f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaadf216960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaadf285bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaadf285bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaadf285bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaadf255624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaadf29ad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaadf25e3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaadf24dbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaadf24d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffb7e273fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffb7e274d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaadf19f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff6840760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6840770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6840780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff6840790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff68407a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff68407b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff68407c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff68407d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff68407e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff68407f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6840800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==427==ABORTING
+
+=== findings/default/crashes/id:000009,sig:06,src:000757,time:1969767,execs:1415353,op:havoc,rep:3 ===
+NOTE: CRC in the file is 0x815467c7, change to 0xe8496f43
+libpng warning: Ignoring PLTE chunk in grayscale PNG
+libpng warning: tRNS chunk has out-of-range samples for bit_depth
+libpng warning: Incorrect bKGD chunk length
+NOTE: CRC in the file is 0x88051d48, change to 0xf86fe9c7
+NOTE: CRC in the file is 0x46c96b3e, change to 0x9cc333fa
+libpng warning: Data error in compressed datastream in zTXt chunk
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0xeaee25b8
+NOTE: CRC in the file is 0xfc64ba54, change to 0x7a9232a1
+NOTE: CRC in the file is 0x71c8653c, change to 0xe4d10d6d
+=================================================================
+==430==ERROR: AddressSanitizer: heap-use-after-free on address 0xffffa8803dc8 at pc 0xaaaab03d5800 bp 0xffffca3b8390 sp 0xffffca3b8388
+READ of size 8 at 0xffffa8803dc8 thread T0
+    #0 0xaaaab03d57fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaab03d4f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaab03ce31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaab03cd8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffffac3273fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffffac3274d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaab031f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffffa8803dc8 is located 8 bytes inside of 288-byte region [0xffffa8803dc0,0xffffa8803ee0)
+freed by thread T0 here:
+    #0 0xaaaab03966cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaab04059dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaab04059dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaab03d0150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaab03cfba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaab03e104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaab03e0d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaab03ce12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaab03cd8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffac3273fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffac3274d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaab031f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaab0396960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaab0405bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaab0405bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaab0405bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaab03d5624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaab041b55c in png_handle_zTXt /fuzzing/libpng-1.2.56/pngrutil.c:2221:10
+    #6 0xaaaab03de43c in png_read_info /fuzzing/libpng-1.2.56/pngread.c:549:10
+    #7 0xaaaab03cdbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaab03cd8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffac3273fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffac3274d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaab031f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff5100760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff5100770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff5100780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff5100790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff51007a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff51007b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff51007c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff51007d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff51007e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff51007f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff5100800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==430==ABORTING
+
+=== findings/default/crashes/id:000010,sig:06,src:000674,time:2449786,execs:1814941,op:havoc,rep:2 ===
+NOTE: CRC in the file is 0x005467c7, change to 0xb0e5f4fb
+NOTE: CRC in the file is 0x46c96b3e, change to 0xc834b5b7
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x2512bbef, change to 0x212dff03
+NOTE: CRC in the file is 0x912a96cf, change to 0xca42a6ed
+=================================================================
+==433==ERROR: AddressSanitizer: heap-use-after-free on address 0xffffb6a03dc8 at pc 0xaaaac0d55800 bp 0xffffed01fe50 sp 0xffffed01fe48
+READ of size 8 at 0xffffb6a03dc8 thread T0
+    #0 0xaaaac0d557fc in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:727:23
+    #1 0xaaaac0d54f7c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #2 0xaaaac0d4e31c in run_standard_read /fuzzing/src/harness2.c:138:21
+    #3 0xaaaac0d4d8f8 in main /fuzzing/src/harness2.c:285:5
+    #4 0xffffba8373fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0xffffba8374d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #6 0xaaaac0c9f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+0xffffb6a03dc8 is located 8 bytes inside of 288-byte region [0xffffb6a03dc0,0xffffb6a03ee0)
+freed by thread T0 here:
+    #0 0xaaaac0d166cc in free (/fuzzing/png_fuzz+0xa66cc) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaac0d859dc in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaac0d859dc in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaac0d50150 in png_free_data /fuzzing/libpng-1.2.56/png.c:393:10
+    #4 0xaaaac0d4fba0 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #5 0xaaaac0d6104c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #6 0xaaaac0d60d94 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #7 0xaaaac0d4e12c in run_standard_read /fuzzing/src/harness2.c:126:5
+    #8 0xaaaac0d4d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffba8373fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffba8374d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaac0c9f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+previously allocated by thread T0 here:
+    #0 0xaaaac0d16960 in __interceptor_malloc (/fuzzing/png_fuzz+0xa6960) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+    #1 0xaaaac0d85bac in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaac0d85bac in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaac0d85bac in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaac0d55624 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:704:38
+    #5 0xaaaac0d9ad84 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaac0d5e3a0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaac0d4dbf0 in run_standard_read /fuzzing/src/harness2.c:64:5
+    #8 0xaaaac0d4d8f8 in main /fuzzing/src/harness2.c:285:5
+    #9 0xffffba8373fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffba8374d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaac0c9f7ac in _start (/fuzzing/png_fuzz+0x2f7ac) (BuildId: 777accdbe6902296c2c330d57e89c5f9244d5135)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /fuzzing/libpng-1.2.56/pngset.c:727:23 in png_set_text_2
+Shadow bytes around the buggy address:
+  0x200ff6d40760: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6d40770: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6d40780: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x200ff6d40790: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x200ff6d407a0: 00 00 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+=>0x200ff6d407b0: fa fa fa fa fa fa fa fa fd[fd]fd fd fd fd fd fd
+  0x200ff6d407c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x200ff6d407d0: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x200ff6d407e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6d407f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6d40800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==433==ABORTING
+
