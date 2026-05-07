@@ -1,0 +1,121 @@
+NOTE: CRC in the file is 0x30303030, change to 0xa61e9185
+libpng warning: Ignoring PLTE chunk in grayscale PNG
+NOTE: CRC in the file is 0x30303030, change to 0x057dee3e
+NOTE: CRC in the file is 0x30303030, change to 0x15bcd8d3
+libpng warning: Incorrect bKGD chunk length
+NOTE: CRC in the file is 0x30303030, change to 0xaedc2de4
+NOTE: CRC in the file is 0x30303030, change to 0x1679b48a
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Ignoring bad adaptive filter type
+libpng warning: Extra compressed data.
+libpng warning: Extra compression data.
+NOTE: CRC in the file is 0x30303030, change to 0x5bbb3896
+NOTE: CRC in the file is 0x30303030, change to 0xd423b9f8
+NOTE: CRC in the file is 0x30303030, change to 0xd423b9f8
+NOTE: CRC in the file is 0x30303030, change to 0xb925de80
+NOTE: CRC in the file is 0x30303030, change to 0xae426082
+=================================================================
+==460739==ERROR: AddressSanitizer: heap-use-after-free on address 0xffffb5000790 at pc 0xaaaaac6332f4 bp 0xfffff42f8840 sp 0xfffff42f8030
+READ of size 2 at 0xffffb5000790 thread T0
+    #0 0xaaaaac6332f0 in strlen (/fuzzing/png_fuzz+0x432f0) (BuildId: f80b78e1e651bcb6cce336444366e141c2e284c6)
+    #1 0xaaaaac6d5bd8 in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:730:17
+    #2 0xaaaaac6d594c in png_set_text /fuzzing/libpng-1.2.56/pngset.c:654:10
+    #3 0xaaaaac6ce944 in path_standard_read /fuzzing/src/harness.c:162:21
+    #4 0xaaaaac6cda6c in main /fuzzing/src/harness.c:332:5
+    #5 0xffffb89973fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #6 0xffffb89974d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #7 0xaaaaac61f82c in _start (/fuzzing/png_fuzz+0x2f82c) (BuildId: f80b78e1e651bcb6cce336444366e141c2e284c6)
+
+0xffffb5000790 is located 0 bytes inside of 6-byte region [0xffffb5000790,0xffffb5000796)
+freed by thread T0 here:
+    #0 0xaaaaac69674c in free (/fuzzing/png_fuzz+0xa674c) (BuildId: f80b78e1e651bcb6cce336444366e141c2e284c6)
+    #1 0xaaaaac708e0c in png_free_default /fuzzing/libpng-1.2.56/pngmem.c:555:4
+    #2 0xaaaaac708e0c in png_free /fuzzing/libpng-1.2.56/pngmem.c:539:7
+    #3 0xaaaaac6d09ac in png_free_data /fuzzing/libpng-1.2.56/png.c:384:13
+    #4 0xaaaaac6d0a54 in png_free_data /fuzzing/libpng-1.2.56/png.c:392:14
+    #5 0xaaaaac6d0570 in png_info_destroy /fuzzing/libpng-1.2.56/png.c:624:4
+    #6 0xaaaaac6e447c in png_read_destroy /fuzzing/libpng-1.2.56/pngread.c:1216:7
+    #7 0xaaaaac6e41c4 in png_destroy_read_struct /fuzzing/libpng-1.2.56/pngread.c:1155:4
+    #8 0xaaaaac6ce7cc in path_standard_read /fuzzing/src/harness.c:150:5
+    #9 0xaaaaac6cda6c in main /fuzzing/src/harness.c:332:5
+    #10 0xffffb89973fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #11 0xffffb89974d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #12 0xaaaaac61f82c in _start (/fuzzing/png_fuzz+0x2f82c) (BuildId: f80b78e1e651bcb6cce336444366e141c2e284c6)
+
+previously allocated by thread T0 here:
+    #0 0xaaaaac6969e0 in __interceptor_malloc (/fuzzing/png_fuzz+0xa69e0) (BuildId: f80b78e1e651bcb6cce336444366e141c2e284c6)
+    #1 0xaaaaac708fdc in png_malloc_default /fuzzing/libpng-1.2.56/pngmem.c:511:13
+    #2 0xaaaaac708fdc in png_malloc /fuzzing/libpng-1.2.56/pngmem.c:468:14
+    #3 0xaaaaac708fdc in png_malloc_warn /fuzzing/libpng-1.2.56/pngmem.c:580:21
+    #4 0xaaaaac6d5d0c in png_set_text_2 /fuzzing/libpng-1.2.56/pngset.c:776:31
+    #5 0xaaaaac71e1b4 in png_handle_tEXt /fuzzing/libpng-1.2.56/pngrutil.c:2101:10
+    #6 0xaaaaac6e17d0 in png_read_info /fuzzing/libpng-1.2.56/pngread.c:537:10
+    #7 0xaaaaac6cde30 in path_standard_read /fuzzing/src/harness.c:66:5
+    #8 0xaaaaac6cda6c in main /fuzzing/src/harness.c:332:5
+    #9 0xffffb89973fc in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0xffffb89974d4 in __libc_start_main csu/../csu/libc-start.c:392:3
+    #11 0xaaaaac61f82c in _start (/fuzzing/png_fuzz+0x2f82c) (BuildId: f80b78e1e651bcb6cce336444366e141c2e284c6)
+
+SUMMARY: AddressSanitizer: heap-use-after-free (/fuzzing/png_fuzz+0x432f0) (BuildId: f80b78e1e651bcb6cce336444366e141c2e284c6) in strlen
+Shadow bytes around the buggy address:
+  0x200ff6a000a0: fa fa fd fa fa fa fd fa fa fa fd fa fa fa fd fa
+  0x200ff6a000b0: fa fa fd fa fa fa fd fa fa fa fd fa fa fa fd fa
+  0x200ff6a000c0: fa fa fd fa fa fa fd fa fa fa fd fa fa fa fd fa
+  0x200ff6a000d0: fa fa fd fa fa fa fd fa fa fa fd fa fa fa fd fa
+  0x200ff6a000e0: fa fa fd fa fa fa fd fa fa fa fd fa fa fa fd fa
+=>0x200ff6a000f0: fa fa[fd]fa fa fa fd fa fa fa fa fa fa fa fa fa
+  0x200ff6a00100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6a00110: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6a00120: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6a00130: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x200ff6a00140: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==460739==ABORTING
