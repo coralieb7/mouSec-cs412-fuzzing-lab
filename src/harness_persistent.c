@@ -1,30 +1,35 @@
-/* libpng 1.2.56 fuzzing harness (fork mode). */
+/* Persistent-mode version of harness.c. Same decoding pipeline, but
+   AFL feeds the input in memory and loops in-process. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <png.h>
 
-int main(int argc, char **argv) {
-    if (argc < 2) return 0;
+__AFL_FUZZ_INIT();
 
-    FILE *fp = fopen(argv[1], "rb");
-    if (!fp) return 0;
+static void decode_once(const unsigned char *buf, size_t sz) {
+    if (sz == 0) return;
+
+    /* libpng 1.2.56 has no memory-read API, dump the buffer to a tmpfile */
+    FILE *fp = tmpfile();
+    if (!fp) return;
+    fwrite(buf, 1, sz, fp);
+    rewind(fp);
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING,
                                              NULL, NULL, NULL);
-    if (!png) { fclose(fp); return 0; }
+    if (!png) { fclose(fp); return; }
 
     png_infop info = png_create_info_struct(png);
     if (!info) {
         png_destroy_read_struct(&png, NULL, NULL);
         fclose(fp);
-        return 0;
+        return;
     }
 
     png_bytepp rows = NULL;
     png_uint_32 height = 0;
 
-    /* libpng longjmps here on parse errors, otherwise AFL sees them as crashes */
     if (setjmp(png_jmpbuf(png))) {
         if (rows) {
             for (png_uint_32 i = 0; i < height; i++) free(rows[i]);
@@ -32,13 +37,11 @@ int main(int argc, char **argv) {
         }
         png_destroy_read_struct(&png, &info, NULL);
         fclose(fp);
-        return 0;
+        return;
     }
 
-    /* cap dimensions so a mutated IHDR can't make us malloc gigabytes */
     png_set_user_limits(png, 1024, 1024);
     png_set_keep_unknown_chunks(png, PNG_HANDLE_CHUNK_ALWAYS, NULL, 0);
-
     png_init_io(png, fp);
     png_read_info(png, info);
 
@@ -50,7 +53,6 @@ int main(int argc, char **argv) {
 
     height = png_get_image_height(png, info);
     png_uint_32 rowbytes = png_get_rowbytes(png, info);
-
     rows = malloc(height * sizeof(png_bytep));
     if (rows) {
         for (png_uint_32 i = 0; i < height; i++) {
@@ -75,5 +77,15 @@ int main(int argc, char **argv) {
     }
     png_destroy_read_struct(&png, &info, NULL);
     fclose(fp);
+}
+
+int main(int argc, char **argv) {
+    (void)argc; (void)argv;
+    __AFL_INIT();
+    unsigned char *buf = __AFL_FUZZ_TESTCASE_BUF;
+    while (__AFL_LOOP(10000)) {
+        int len = __AFL_FUZZ_TESTCASE_LEN;
+        if (len > 0) decode_once(buf, (size_t)len);
+    }
     return 0;
 }

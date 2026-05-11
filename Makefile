@@ -1,80 +1,71 @@
-# CS-412 Fuzzing Lab Makefile - mouSec
+# libpng 1.2.56 fuzzing lab
 
 CC_INSTRUMENTED = afl-clang-fast
-CC_QEMU = gcc
+CC_VANILLA      = gcc
 
-# Library paths
-LIBPNG_DIR = /fuzzing/libpng-1.2.56
+LIBPNG_DIR          = /fuzzing/libpng-1.2.56
 LIBPNG_INSTRUMENTED = $(LIBPNG_DIR)/build_out
-LIBPNG_VANILLA = $(LIBPNG_DIR)/install_vanilla
+LIBPNG_VANILLA      = $(LIBPNG_DIR)/install_vanilla
 
-# Flags
 CFLAGS_COMMON = -g -O1
-CFLAGS_ASAN = -fsanitize=address -fno-omit-frame-pointer
-INCLUDES_INSTRUMENTED = -I$(LIBPNG_INSTRUMENTED)/include
-LIBS_INSTRUMENTED = -L$(LIBPNG_INSTRUMENTED)/lib -lpng12 -lz -lm
-INCLUDES_VANILLA = -I$(LIBPNG_VANILLA)/include
-LIBS_VANILLA = -L$(LIBPNG_VANILLA)/lib -lpng12 -lz -lm
+CFLAGS_ASAN   = -fsanitize=address -fno-omit-frame-pointer
 
-# Directories
-SRC_DIR = src
-INPUT_DIR = input
-FINDINGS_DIR = findings
-FINDINGS_QEMU_DIR = findings-qemu
-PLOT_DIR = plot_output
-PLOT_QEMU_DIR = plot_output_qemu
-DICT_FILE = dictionary.txt
+INC_INSTR  = -I$(LIBPNG_INSTRUMENTED)/include
+LIB_INSTR  = -L$(LIBPNG_INSTRUMENTED)/lib  -lpng12 -lz -lm
+INC_VAN    = -I$(LIBPNG_VANILLA)/include
+LIB_VAN    = -L$(LIBPNG_VANILLA)/lib       -lpng12 -lz -lm
 
-.PHONY: all build build-instrumented build-qemu fuzz-instrumented fuzz-qemu plot clean
+SEEDS  = input
+DICT   = dictionary.txt
+
+.PHONY: all build build-fork build-persistent build-qemu \
+        seeds fuzz fuzz-persistent fuzz-qemu plot clean
 
 all: build
 
-build: build-instrumented build-qemu
+build: build-fork build-persistent build-qemu
 
-# White-box: instrumented libpng + ASan
-build-instrumented: $(SRC_DIR)/harness.c
+seeds:
+	python3 src/make_seeds.py
+
+# instrumented + ASan, fork mode
+build-fork: src/harness.c
 	$(CC_INSTRUMENTED) $(CFLAGS_COMMON) $(CFLAGS_ASAN) \
-		$(INCLUDES_INSTRUMENTED) \
-		$(SRC_DIR)/harness.c \
-		$(LIBS_INSTRUMENTED) \
-		-o png_fuzz
-	@echo "Built png_fuzz (instrumented)"
+	    $(INC_INSTR) src/harness.c $(LIB_INSTR) -o png_fuzz
 
-# Black-box: vanilla libpng, no sanitizers
-build-qemu: $(SRC_DIR)/harness.c
-	$(CC_QEMU) $(CFLAGS_COMMON) \
-		$(INCLUDES_VANILLA) \
-		$(SRC_DIR)/harness.c \
-		$(LIBS_VANILLA) \
-		-o png_fuzz_qemu
-	@echo "Built png_fuzz_qemu (vanilla)"
+# instrumented + ASan, persistent mode
+build-persistent: src/harness_persistent.c
+	$(CC_INSTRUMENTED) $(CFLAGS_COMMON) $(CFLAGS_ASAN) \
+	    $(INC_INSTR) src/harness_persistent.c $(LIB_INSTR) \
+	    -o png_fuzz_persistent
 
-fuzz-instrumented: build-instrumented
-	mkdir -p $(FINDINGS_DIR)
-	afl-fuzz -m none -t 1000+ \
-		-i $(INPUT_DIR) \
-		-o $(FINDINGS_DIR) \
-		-x $(DICT_FILE) \
-		-- ./png_fuzz @@
+# uninstrumented vanilla build for QEMU mode
+build-qemu: src/harness.c
+	$(CC_VANILLA) $(CFLAGS_COMMON) \
+	    $(INC_VAN) src/harness.c $(LIB_VAN) -o png_fuzz_qemu
+
+fuzz: build-fork
+	mkdir -p findings
+	afl-fuzz -m none -t 2000+ \
+	    -i $(SEEDS) -o findings -x $(DICT) -- ./png_fuzz @@
+
+fuzz-persistent: build-persistent
+	mkdir -p findings-persistent
+	afl-fuzz -m none -t 2000+ \
+	    -i $(SEEDS) -o findings-persistent -x $(DICT) \
+	    -- ./png_fuzz_persistent
 
 fuzz-qemu: build-qemu
-	mkdir -p $(FINDINGS_QEMU_DIR)
-	afl-fuzz -Q -m none -t 1000+ \
-		-i $(INPUT_DIR) \
-		-o $(FINDINGS_QEMU_DIR) \
-		-x $(DICT_FILE) \
-		-- ./png_fuzz_qemu @@
+	mkdir -p findings-qemu
+	afl-fuzz -Q -m none -t 2000+ \
+	    -i $(SEEDS) -o findings-qemu -x $(DICT) -- ./png_fuzz_qemu @@
 
 plot:
-	@if [ -d "$(FINDINGS_DIR)/default" ]; then \
-		mkdir -p $(PLOT_DIR); \
-		afl-plot $(FINDINGS_DIR)/default $(PLOT_DIR); \
-	fi
-	@if [ -d "$(FINDINGS_QEMU_DIR)/default" ]; then \
-		mkdir -p $(PLOT_QEMU_DIR); \
-		afl-plot $(FINDINGS_QEMU_DIR)/default $(PLOT_QEMU_DIR); \
-	fi
+	@[ -d findings/default ]            && afl-plot findings/default            plot_output      || true
+	@[ -d findings-qemu/default ]       && afl-plot findings-qemu/default       plot_output_qemu || true
+	@[ -d findings-persistent/default ] && afl-plot findings-persistent/default plot_output_persistent || true
 
 clean:
-	rm -f png_fuzz png_fuzz_qemu
-	rm -rf $(FINDINGS_DIR) $(FINDINGS_QEMU_DIR) $(PLOT_DIR) $(PLOT_QEMU_DIR)
+	rm -f png_fuzz png_fuzz_persistent png_fuzz_qemu
+	rm -rf findings findings-qemu findings-persistent \
+	       plot_output plot_output_qemu plot_output_persistent
