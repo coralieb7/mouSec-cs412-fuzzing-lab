@@ -2,3 +2,5 @@ libpng-1.2.56
 png_fuzz
 
 .DS_Store
+png_fuzz_qemu
+png_fuzz_persistent
